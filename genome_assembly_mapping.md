@@ -170,3 +170,18 @@ singularity run --app samtools113 /share/singularity/images/ccs/ngstools/samtool
 7. Submit your job by running `sbatch bwa2_mapping.sh`. Analysis will take about 10 minutes. <br>
 
 `Bdor_B70_SRR22045853.bam` is the file with your mapped reads. 
+
+What's the bam file look like? It would help to make that human readable, so let's conver to sam using samtools:
+```
+module load module load samtools-1.12-gcc-9.3.0-zo3utt7
+samtools view -h Bdor_B70_SRR22045853.bam > Bdor_B70_SRR22045853.sam
+```
+
+Now you can head/tail/nano that file and make some sense of it, but look at the file size of sam vs. bam. (hint, `ls -l` or `ls -lh`).
+
+And what about some stats from that bam file? 
+```
+samtools stats Bdor_B70_SRR22045853.bam | grep ^GCD | cut -f 2-
+```
+
+You can get a lot of info from your mapped reads, see [here](https://bookdown.org/content/24942ad6-9ed7-44e9-b214-1ea8ba9f0224/learning-the-bam-format.html) for other ideas.
