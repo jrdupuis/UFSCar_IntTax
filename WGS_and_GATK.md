@@ -1,3 +1,5 @@
+## Read mapping and SNP calling using GATK
+
 To download from NCBI, we're going to need to use SRAtoolkit which is available [here](https://github.com/ncbi/sra-tools/wiki/01.-Downloading-SRA-Toolkit)
 
 Here's a list of SRA accessions that we can deal with 
