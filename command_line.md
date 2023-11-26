@@ -122,7 +122,7 @@ Unlike grep, search_word is not in quotes but it is still case-sensitive. Howeve
 **_Task:_** Replace all occurrences of the word "ERROR" with the word "check".
 
 ### `awk`: it's complicated
-`awk` is an entire programming language that can do the same tasks as grep and sed but also a lot more. 
+`awk` is an entire programming language that can do the same tasks as grep and sed but also a lot more. Some of the syntax for AWK gets very complicated, and requires a lot of experience to use effortlessly. But once you spend some time with AWK, being able to google around for solutions and implement it becomes doable. 
 
 One common reason to use `awk` is when you want to access data in columns. Columns are numbered from $1 to $n.
 
