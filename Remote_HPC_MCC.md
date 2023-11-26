@@ -94,7 +94,7 @@ Now let's edit that `batch_header.sh` content to contain an actual command that 
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --account=coa_jdu282_brazil_bootcamp2023
-#SBATCH --mail-type END
+#SBATCH --mail-type ALL
 #SBATCH --mail-user julian.dupuis@uky.edu
 
 echo starting
@@ -125,3 +125,4 @@ Let's check on the status of the job. Standard out (stdout) for computers is the
 
 Another way to interact with the stdout from a job is to write that output to another file. Take the `counting.sh` file and at the end of each "echo" line, add the following `  >> counting_output`. Resubmit the job, and now see if you can follow the status of the job in real time using `cat` and the `counting_output` file.
 
+Also, note that I modified this line in the job script `#SBATCH --mail-type` to be `ALL`. You should have emails in your inbox that document when these jobs started and ended. The exit code is important in this email, as it lets you know if the job finished with no issues (exit code 0) or with an error or other issue. See [here](https://hpc-discourse.usc.edu/t/exit-codes-and-their-meanings/414) for more info on exit codes. They can be very useful when troubleshooting errors!
