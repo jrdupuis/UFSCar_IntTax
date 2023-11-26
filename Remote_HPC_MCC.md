@@ -28,7 +28,7 @@ Some programs are already installed on LCC, however, they will not work until th
 
 `module list` lists the activated programs onto your account.
 
-`module avail` lists the programs installed on LCC. Use `module avail | grep "program_name"` to search for a specific program (note that most module names on are in lowercase).
+`module avail` lists the programs installed on LCC. Use `module avail | grep "program_name"` to search for a specific program (note that most module names on are in lowercase). Alternatively, you can use `module spider "program_name"` to search for a specific program.
 
 `module load module_name` activates the program
 
@@ -39,7 +39,7 @@ ___
 ## Singularities
 These are like modules. The full list of available programs is [here](https://ukyrcd.atlassian.net/wiki/spaces/UKYHPCDocs/pages/2920537/Software+list+for+singularity+containers+for+conda+packages+in+the+MCC+cluster)
 
-Instead of loading them, however, add the singularity information (in the "Notes" column) to your batch script. 
+Instead of loading them, however, add the singularity information (in the "Notes" area) to your batch script. 
 
 ___
 
@@ -84,3 +84,44 @@ Each job gets a job number and a corresponding `slurm-job_number.out` file. This
 To cancel a submitted job use `scancel job_number` (get the job number from `squeue | grep mcc_user_name`)
 
 NB: Never run a job without submitting a batch script.
+
+### run a job
+Now let's edit that `batch_header.sh` content to contain an actual command that we can watch. Create a new job file named `counting.sh`, and paste the following into it:
+```
+#!/bin/bash
+#SBATCH --partition=normal
+#SBATCH --time 20:00:00
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --account=coa_jdu282_brazil_bootcamp2023
+#SBATCH --mail-type END
+#SBATCH --mail-user julian.dupuis@uky.edu
+
+echo starting
+sleep 10
+echo "it's been 10 seconds"
+sleep 20
+echo "it's been 30 seconds"
+sleep 30 
+echo "it's been 60 seconds. Exciting!"
+sleep 5
+echo "it's been 65 seconds. Amazing."
+sleep 6
+echo "it's been 71 seconds. What are we deviating from 5 second intervals???"
+```
+Save the file, and then check that the job submission file looks with cat. <br>
+Let's submit the job using the following command: `sbatch counting.sh`
+
+Once you have the job submitted, check that it's running by using `squeue`. Try that command out by itself. Lots of stuff, right? That's everyone's jobs that are running on the cluster right now. We can subset that in two ways. First, we could just grep out our username:
+```
+squeue | grep "username"
+```
+Or you can use an option in squeue:
+```
+squeue -u "username"
+```
+
+Let's check on the status of the job. Standard out (stdout) for computers is the normal output of a command/execution. Standard error (stderr) is any error messages that arise from a command/execution. The default location for stdout when MCC is running a job is in a file called `slurm-[jobID].out`. So let's see what's in that file. From when you submitted your job, or from squeue, you can figure out what the job ID is for that job. Try using `cat` to see what's in that file. How long ago did you submit that file? Can you piece it together based on what's in the output file?
+
+Another way to interact with the stdout from a job is to write that output to another file. Take the `counting.sh` file and at the end of each "echo" line, add the following `  >> counting_output`. Resubmit the job, and now see if you can follow the status of the job in real time using `cat` and the `counting_output` file.
+
