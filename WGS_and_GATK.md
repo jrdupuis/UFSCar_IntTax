@@ -1,6 +1,8 @@
-## Read mapping and SNP calling using GATK
+# Read mapping and SNP calling using GATK
+## Getting some data
+For this we're going to need a reference genome as well as some shotgun data to map to the reference and call SNPs from. We'll use the modified B. dorsalis PacBio reference genome for the former.
 
-To download from NCBI, we're going to need to use SRAtoolkit which is available [here](https://github.com/ncbi/sra-tools/wiki/01.-Downloading-SRA-Toolkit)
+For the shotgun reads, we'll need to download these from multiple individuals, which adds repetitiveness to this task. To download from NCBI, we're going to need to use SRAtoolkit which is available [here](https://github.com/ncbi/sra-tools/wiki/01.-Downloading-SRA-Toolkit)
 
 Here's a list of SRA accessions that we can deal with 
 ```
