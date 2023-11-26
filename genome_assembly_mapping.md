@@ -2,14 +2,14 @@
 Goal: (1) Create a _Bactrocera dorsalis_ genome assembly from small-insert, paired-end (150 bp) shotgun Illumina sequencing reads. (2) Map reads from a sequenced individual to the assembly.
 
 ## Assembly read data
-The sequencing reads are available in the course folder on MCC `/pscratch/jdu282_brazil_bootcamp2023/data/Bdor_reads`
+The sequencing reads are available in the course folder on MCC `/pscratch/jdu282_brazil_bootcamp2023/data/Bdor_assembly_reads`
 
 Instead of copying the files, we are going to make symlinks (symbolic links). Why? To minimize memory use--this way, the course only has one copy of the data instead of everyone in the class downloading the same 10 GB files. 
 
 **_Task:_** Make symlinks to the sequencing reads for assembly. <br>
 1. In your home directory on MCC, make a folder named "sequencing_reads".
 2. Go into the folder. <br>
-3. Run `ln -s /pscratch/jdu282_brazil_bootcamp2023/data/Bdor_reads/Bdor_ref_Illumina_SRR901643_R1.fastq` <br>
+3. Run `ln -s /pscratch/jdu282_brazil_bootcamp2023/data/Bdor_assembly_reads/Bdor_ref_Illumina_SRR901643_R1.fastq` <br>
 4. Repeat for Bdor_ref_Illumina_SRR901643_R2.fastq. <br>
 5. Run `ls` and you should see the two files in light blue text.
 
@@ -72,7 +72,7 @@ ___
 2. Open spades.sh with nano.
 3. Add the following lines after the header. Change the reads paths to your path information.
 ```
-singularity run --app spades3155 /share/singularity/images/ccs/conda/amd-conda9-rocky8.sinf spades.py --pe1-1 /pscratch/jdu282_brazil_bootcamp2023/data/Bdor_reads/Bdor_ref_Illumina_SRR901643_R1_trimmed.fq.gz --pe1-2 /pscratch/jdu282_brazil_bootcamp2023/data/Bdor_reads/Bdor_ref_Illumina_SRR901643_R2_trimmed.fq.gz --threads 32 -o Bdor_ref_assembly
+singularity run --app spades3155 /share/singularity/images/ccs/conda/amd-conda9-rocky8.sinf spades.py --pe1-1 /pscratch/jdu282_brazil_bootcamp2023/data/Bdor_assembly_reads/Bdor_ref_Illumina_SRR901643_R1_trimmed.fq.gz --pe1-2 /pscratch/jdu282_brazil_bootcamp2023/data/Bdor_assembly_reads/Bdor_ref_Illumina_SRR901643_R2_trimmed.fq.gz --threads 32 -o Bdor_ref_assembly
 ```
 3. Submit your job by running `sbatch spades.sh`. Assembly will take about three hours. <br>
 4. Once assembly is complete, go into the "Bdor_genome_assembly" folder and make a copy of the assembly by running `cp scaffolds.fasta Bdor_ref_genome.fasta`
