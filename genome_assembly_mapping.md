@@ -48,15 +48,17 @@ ___
 2. Move fastp.sh to your sequencing_reads folder.
 3. Go into your sequencing_reads folder.
 4. Open fastp.sh with nano.
-5. In the header, change `#SBATCH --ntasks=16`
+5. In the header, change `#SBATCH --ntasks=16` (any idea why we're doing this? Does looking at the command below help at all?)
 6. Add the following lines after the header. Change the fastp path to your path information.
 ```
 /path/to/programs/fastp --in1 Bdor_ref_Illumina_SRR901643_R1.fastq --in2 Bdor_ref_Illumina_SRR901643_R2.fastq --out1 Bdor_ref_Illumina_SRR901643_R1_trimmed.fq.gz --out2 Bdor_ref_Illumina_SRR901643_R2_trimmed.fq.gz --detect_adapter_for_pe --overrepresentation_analysis --length_required 100 --compression 9 --thread 16
 ```
 7. Save and close nano.
-8. Submit your job `sbatch fastp.sh` (job should take ~20 minutes).
+8. Submit your job `sbatch fastp.sh` (job should take ~20 minutes). 
 
 **_Question:_** Look at the fastp [manual](https://github.com/OpenGene/fastp#polyx-tail-trimming). Why did we not use the `--trim_poly_g` setting? Hint, see the NCBI SRA page for our sequencing data. What type of sequencing instrument was used to generate the data?
+
+**_Question:_** Did you know the answer to the question after number 5 above? If not, does looking at `fastp -h` help?
 
 ___
 ## Compare raw and trimmed fastq files
@@ -70,12 +72,12 @@ ___
 2. Open spades.sh with nano.
 3. Add the following lines after the header. Change the reads paths to your path information.
 ```
-singularity run --app spades3155 /share/singularity/images/ccs/conda/amd-conda9-rocky8.sinf spades.py --pe1-1 /pscratch/jdu282_brazil_bootcamp2023/Bdor_reads/Bdor_ref_Illumina_SRR901643_R1_trimmed.fq.gz --pe1-2 /pscratch/jdu282_brazil_bootcamp2023/Bdor_reads/Bdor_ref_Illumina_SRR901643_R2_trimmed.fq.gz --threads 32 -o Bdor_ref_assembly
+singularity run --app spades3155 /share/singularity/images/ccs/conda/amd-conda9-rocky8.sinf spades.py --pe1-1 /pscratch/jdu282_brazil_bootcamp2023/data/Bdor_reads/Bdor_ref_Illumina_SRR901643_R1_trimmed.fq.gz --pe1-2 /pscratch/jdu282_brazil_bootcamp2023/data/Bdor_reads/Bdor_ref_Illumina_SRR901643_R2_trimmed.fq.gz --threads 32 -o Bdor_ref_assembly
 ```
 3. Submit your job by running `sbatch spades.sh`. Assembly will take about three hours. <br>
 4. Once assembly is complete, go into the "Bdor_genome_assembly" folder and make a copy of the assembly by running `cp scaffolds.fasta Bdor_ref_genome.fasta`
 
-**_Question_**: We ran `cp scaffolds.fasta Bdor_ref_genome.fasta` to make a copy of the assembly. We will use for downstream analyses. Why did we make a copy instead of using the original `scaffolds.fasta` file?
+**_Question_**: We ran `cp scaffolds.fasta Bdor_ref_genome.fasta` to make a copy of the assembly. We will use for downstream analyses. Why did we make a copy instead of using the original `scaffolds.fasta` file? What else could you do to maintain 
 
 ___
 
@@ -125,7 +127,7 @@ ___
 ### Get the sequence data
 **_Task:_** Make symlinks to the sequencing reads for alignment. <br>
 1. Go into your "sequencing_reads" folder. <br>
-2. Run `ln -s /pscratch/jdu282_brazil_bootcamp2023/Bdor_reads/mapping/Bdor_B70_SRR22045853_R1.fastq` <br>
+2. Run `ln -s /pscratch/jdu282_brazil_bootcamp2023/data/Bdor_reads/mapping/Bdor_B70_SRR22045853_R1.fastq` <br>
 3. Repeat for Bdor_B70_SRR22045853_R2.fastq. <br>
 
 Learn more about the data [here](https://www.ncbi.nlm.nih.gov/sra/?term=SRR22045853)
