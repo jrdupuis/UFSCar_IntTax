@@ -2,14 +2,14 @@
 Goal: (1) Create a _Bactrocera dorsalis_ genome assembly from small-insert, paired-end (150 bp) shotgun Illumina sequencing reads. (2) Map reads from a sequenced individual to the assembly.
 
 ## Assembly read data
-The sequencing reads are available in the course folder on MCC `/pscratch/jdu282_brazil_bootcamp2023/Bdor_reads`
+The sequencing reads are available in the course folder on MCC `/pscratch/jdu282_brazil_bootcamp2023/data/Bdor_reads`
 
 Instead of copying the files, we are going to make symlinks (symbolic links). Why? To minimize memory use--this way, the course only has one copy of the data instead of everyone in the class downloading the same 10 GB files. 
 
 **_Task:_** Make symlinks to the sequencing reads for assembly. <br>
 1. In your home directory on MCC, make a folder named "sequencing_reads".
 2. Go into the folder. <br>
-3. Run `ln -s /pscratch/jdu282_brazil_bootcamp2023/Bdor_reads/Bdor_ref_Illumina_SRR901643_R1.fastq` <br>
+3. Run `ln -s /pscratch/jdu282_brazil_bootcamp2023/data/Bdor_reads/Bdor_ref_Illumina_SRR901643_R1.fastq` <br>
 4. Repeat for Bdor_ref_Illumina_SRR901643_R2.fastq. <br>
 5. Run `ls` and you should see the two files in light blue text.
 
