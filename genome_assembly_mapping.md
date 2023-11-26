@@ -82,13 +82,21 @@ singularity run --app spades3155 /share/singularity/images/ccs/conda/amd-conda9-
 ___
 
 ## Assembly quality
+While we wait for our assembly to finish, let's look at another genome assembly for this species and calculate some genome assembly quality statistics. Then, once your assembly is done, you can do the same steps for your assembly and compare them to this one.
+
+**_Task:_** Calculate assembly quality stats for another B. dorsalis genome, this time a PacBio genome assembly
+1. Download the Bdor PacBio genome assembly `wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/030/710/565/GCA_030710565.1_ASM3071056v1/GCA_030710565.1_ASM3071056v1_genomic.fna.gz`
+2. Rename this assembly `mv GCA_030710565.1_ASM3071056v1_genomic.fna.gz Bdor_ref_PacBio_GCA_030710565.1_ASM3071056v1_genomic.fna.gz`
+
+Additional information about the PacBio assembly is [here](https://www.ncbi.nlm.nih.gov/datasets/genome/GCA_030710565.1/)
+
 ### Busco
 **_Task:_** Make and submit a batch script for genome assembly. <br>
 1. In your home directory on MCC, make a copy of your batch_header.sh file `cp batch_header.sh busco.sh` <br>
 2. Open busco.sh with nano.
 3. Add the following lines after the header. Change the genome assembly path to your path information.
 ```
-singularity run --app busco546 /share/singularity/images/ccs/conda/amd-conda10-rocky8.sinf busco --in /path/to/your/Bdor_ref_assembly/Bdor_ref_scaffolds.fasta --out Bdor_ref_busco --mode genome --lineage_dataset arthropoda_odb10 --cpu 32 
+singularity run --app busco546 /share/singularity/images/ccs/conda/amd-conda10-rocky8.sinf busco --in /path/to/your/assembly/[assembly].fasta --out [name for output directory] --mode genome --lineage_dataset arthropoda_odb10 --cpu 32 
 ```
 4. Submit your job by running `sbatch busco.sh`. Analysis will take about 15 minutes. <br>
 5. See file `short_summary.specific.arthropoda_odb10.Bdor_ref_busco.txt`
@@ -99,7 +107,7 @@ singularity run --app busco546 /share/singularity/images/ccs/conda/amd-conda10-r
 
 **_Task:_** Install QUAST.
 1. Run `module load ccs/conda/python`
-2. In your programs folder, run `wget --no-check-certificate https://sourceforge.net/projects/quast/files/latest/download`. If you don't see a file named `quast-5.2.0.tar.gz`, try downloading the file to your local computer and then scp the file to your programs folder. <br>
+2. In your programs folder, run `wget --no-check-certificate https://sourceforge.net/projects/quast/files/latest/download`. If you don't see a file named `quast-5.2.0.tar.gz`, try downloading the file to your local computer and then scp the file to your programs folder. Alternatively, you can download quast from Github as well (but we'll get to the details of how to that later).<br>
 3. Decompress the file `tar -xzvf quast-5.2.0.tar.gz` <br>
 4. Go into the `quast-5.2.0` directory and run `./install.sh`
 
@@ -107,19 +115,12 @@ singularity run --app busco546 /share/singularity/images/ccs/conda/amd-conda10-r
 1. In your home directory, make a copy of your `batch_header.sh` file `cp batch_header.sh quast.sh` <br>
 2. Add the following commands. Change the paths to your path information.
 ```
-/path/to/your/programs/quast-5.2.0/quast.py /path/to/your/Bdor_ref_assembly/Bdor_ref_scaffolds.fasta --min-contig 1000 --threads 32
+/path/to/your/programs/quast-5.2.0/quast.py /path/to/your/assembly/[assembly].fasta --min-contig 1000 --threads 32
 ```
 3. Submit your job by running `sbatch quast.sh`. Analysis will take about 1 minute. <br>
 4. See file `report.txt`
 
 N50 is a popular metric of assembly quality. Learn more about N50 [here](https://www.molecularecologist.com/2017/03/29/whats-n50/)
-
-**_Task:_** Compare Illumina and PacBio genome assembly stats
-1. Download the Bdor PacBio genome assembly `wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/030/710/565/GCA_030710565.1_ASM3071056v1/GCA_030710565.1_ASM3071056v1_genomic.fna.gz`
-2. Rename this assembly `mv GCA_030710565.1_ASM3071056v1_genomic.fna.gz Bdor_ref_PacBio_GCA_030710565.1_ASM3071056v1_genomic.fna.gz`
-2. Rerun BUSCO and QUAST with this genome assembly.
-
-Additional information about the PacBio assembly is [here](https://www.ncbi.nlm.nih.gov/datasets/genome/GCA_030710565.1/)
 
 ___
 
