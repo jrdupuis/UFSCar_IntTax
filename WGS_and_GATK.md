@@ -1,50 +1,65 @@
 # Read mapping and SNP calling using GATK
-## Getting some data
-For this we're going to need a reference genome as well as some shotgun data to map to the reference and call SNPs from. We'll use the modified B. dorsalis PacBio reference genome for the former.
+### Getting some data
+For this we're going to need a reference genome as well as some shotgun data to map to the reference and call SNPs from. We'll use the modified *B. dorsalis* PacBio reference genome for the former.
 
 For the shotgun reads, we'll need to download these from multiple individuals, which adds repetitiveness to this task. To download from NCBI, we're going to need to use SRAtoolkit which is available [here](https://github.com/ncbi/sra-tools/wiki/01.-Downloading-SRA-Toolkit)
 
-Here's a list of SRA accessions that we can deal with 
-```
-head SRR_list
-```
+We're going to use the data from this [BioProject](https://www.ncbi.nlm.nih.gov/bioproject/PRJNA893460/), which has 237 individuals of shotgun data for *B. dorsalis*. I've made a full list of the SRR accessions here: `/pscratch/jdu282_brazil_bootcamp2023/data/Bdor_pop_WGS_SRA_list`. Here's [the paper](https://onlinelibrary.wiley.com/doi/full/10.1111/eva.13507) that documents this Bioproject. 
 
-Downloading these SRAs is a two step process. First we need to do a `prefetch` based on the SRR numbers, and then we actually get the fastq file using `fastq-dump`
+Downloading these SRAs is a two step process. First we need to do a `prefetch` based on the SRR numbers, and then we actually get the fastq file using `fastq-dump`. So set up a job submission file and add these two commands:
+```
+for f in `cat [list of SRR accessions]`; do ./sratoolkit.3.0.7-centos_linux64/bin/prefetch $f.sra; done
+for f in `cat [list of SRR accessions]`; do ./sratoolkit.3.0.7-centos_linux64/bin/fastq-dump --outdir fastq --gzip --skip-technical  --readids --read-filter pass --dumpbase --split-3 --clip $f/$f.sra; done
+```
+Don't submit that with the full list as above. It's a pretty slow process (to do that full list, I would give it like 48 hours to be safe), and we don't need everyone downloading from NCBI at the same time. **So, as a class, let's split up the list and have everyone submit a unique set of SRA downloads!**
 
+### Let's move on with some pre-downloaded data
+While those jobs are running, let's deal with a few individuals that I've already downloaded, which are available here:`/pscratch/jdu282_brazil_bootcamp2023/data/Bdor_pop_WGS_SRA_data` You can see we have paired-end data for four individuals here, with the following SRA numbers and metadata:
 ```
-for f in `cat SRR_list`; do ./sratoolkit.3.0.7-centos_linux64/bin/prefetch $f.sra; done
-for f in `cat SRR_list`; do ./sratoolkit.3.0.7-centos_linux64/bin/fastq-dump --outdir fastq --gzip --skip-technical  --readids --read-filter pass --dumpbase --split-3 --clip $f/$f.sra; done
+SRR22045704	Mayotte	Dembéni	IO	Bactrocera dorsalis	-12.844351	45.166149	May_Dem_6	B104	Illumina PE150	11/28/19
+SRR22045705	Grande Comore	Mandzissani	IO	Bactrocera dorsalis	-11.887344	43.406058	Com_Gra_10	B25	Illumina PE150	9/20/20
+SRR22045731	Réunion	BasTerHaut	IO	Bactrocera dorsalis	-21.322553	55.485116	Reu_Bas_12	B130	Illumina PE150	2/8/19
+SRR22045735	Malawi	Zomba	SSA	Bactrocera dorsalis	-15.383333	35.333333	Malaw_Zom1-10	MWZB1-MWZB10	Illumina PE150	2011
 ```
+I pulled the metadata information from the supplementary file associated with the paper. These authors didn't do a great job of documenting specimen data with NCBI accession information, so it makes it much more difficult to match up what SRA data came from what specimen/locality/etc. **As a class, we can chat about proper protocols for data management of this type of data**
 
-To make things fast to run through this process, let's deal with just four individuals, and subsample them down to just 1M reads
+Since the SRA numbers aren't very informative, let's rename them quick before we start manipulating them at all. This is another data management technique that I use in all my projects: if specimens have species data or geographic origin data, get each specimen's sequence files renamed as early as you can in the process. This avoids the situation, for example, of using SRA accession numbers through all your data filtering steps, and so if you want to relate species/geography data to those intermediate steps, you have to cross reference some spreadsheet instead of just being able to look at the sample name/ID. This is done within reason, i.e., I don't need all that metadata information for each specimen (I can't locate a place by its lat/long coordinates off the top of my head, and some columns are the same for all specimens (e.g. Illumina PE150)). So I'd rename these specimens in this manner: `SRR22045704` becomes `Mayotte_Dembeni_B104` where B104 is the unique specimen identifier referenced in the paper. I would normally include the species name in this code (with format `[species]_[country]_[locality]_[specimenID]`), but since these are all *B. dorsalis*, it's not needed here. 
 
+**_task_** Come up with sensible specimen names to use, soft link these data files to your own directory and rename them in the process, and finally, create a list of the four specimens using your newly created specimen IDs. NOTE, when you rename them, it is often good practice to retain the `R1` and `R2` parts of the file names, as these are commonly used to refer to read 1 and read 2 of paired-end data. 
+
+### Subsetting these reads, to speed up the process
+These are raw reads straight off the sequencer. **_task_** How many reads were sequenced per individual?
+
+To make things fast to run through this process, let's subsample them down to just 1M reads. This will make this whole process doable in one session, but will obviously affect the final SNP dataset that we obtain at the end. Ok, on to subsetting:
 ```
-for f in `cat list_4`; do zcat "$f"_pass_1.fastq.gz | head -n 4000000 > $f.1Mreads.R1.fastq; done
-for f in `cat list_4`; do zcat "$f"_pass_2.fastq.gz | head -n 4000000 > $f.1Mreads.R2.fastq; done
+for f in `cat [whatever you called your list of 4 individual names]`; do zcat "$f"_pass_1.fastq.gz | head -n 4000000 > $f.1Mreads.R1.fastq; done
+for f in `cat [whatever you called your list of 4 individual names]`; do zcat "$f"_pass_2.fastq.gz | head -n 4000000 > $f.1Mreads.R2.fastq; done
 ```
-Can you follow what's going on in that line? Why are we `head`ing that number of lines?
+Can you follow what's going on in that line? What is `zcat` doing? Why are we `head`ing that number of lines? And what does the `>` do?
+
 Now you should have 4 sets of reads that look like this:
 ```
-SRR22045704.1Mreads.R1.fastq
-SRR22045704.1Mreads.R2.fastq
+Mayotte_Dembeni_B104.1Mreads.R1.fastq
+Mayotte_Dembeni_B104.1Mreads.R2.fastq
 ```
 
-The rest of the steps for calling SNPs with GATK require a few other pieces of software, which will let us try several different ways for installing software on a cluster.
+### Let's do some installs!
+The rest of the steps for calling SNPs with GATK require a few other pieces of software, which will let us try several different ways for installing software on a cluster. We're going to go through this together, but you can always find info about how to install these on their websites, often easiest if you just google "[software] installation".
 
-First up is fastp, which can do read trimming among other things. Fastp comes as a pre-built binary, so no installation is required. We just need to download the files to the cluster and make sure they are accessible with `chmod`.
+1. First up is **fastp**, which can do read trimming among other things. Fastp comes as a pre-built binary, so no installation is required. We just need to download the files to the cluster and make sure they are accessible with `chmod`.
 ```
 wget http://opengene.org/fastp/fastp
 chmod a+x ./fastp
 ```
 
-BWA2 is a common read mapping software. It also comes as a prebuilt binary, but this time the download is a tar.bz2 file, so we need to uncompress it.
+2. **BWA2** is a common read mapping software. It also comes as a prebuilt binary, but this time the download is a tar.bz2 file, so we need to uncompress it.
 ```
 https://github.com/bwa-mem2/bwa-mem2/releases
 wget https://github.com/bwa-mem2/bwa-mem2/releases/download/v2.2.1/bwa-mem2-2.2.1_x64-linux.tar.bz2
 tar -xvf bwa-mem2-2.2.1_x64-linux.tar.bz2 
 ```
 
-BamUtil is useful for modifying outputs of read mapping (bam/sam files), and this time we're going to create a conda environment to be able to run bamUtil. A conda environments is a useful way to set up one or multiple softwares that are installed with python. Each time you want to use the tools in an environment, you need to activate it similarly to how you load a module. These steps can be done in a few different ways, but here we'll create an empty environment in a specific location, then activate it, and finally install bamUtils into that environment.
+3. **BamUtil** is useful for modifying outputs of read mapping (bam/sam files), and this time we're going to create a conda environment to be able to run bamUtil. A conda environments is a useful way to set up one or multiple softwares that are installed with python. Each time you want to use the tools in an environment, you need to activate it similarly to how you load a module. These steps can be done in a few different ways, but here we'll create an empty environment in a specific location, then activate it, and finally install bamUtils into that environment.
 ```
 module load ccs/conda/python
 conda create --prefix /scratch/jdu282/bamUtil_env python=3.9
@@ -55,8 +70,9 @@ When you have a conda environment activated, the shell prompt will change to sho
 ```
 conda list
 ```
+Note, that conda is python-based tool. So you need to have python in your PATH whenever you want to use conda. Thus, in a job file, you'd need to include the `module load ccs/conda/python` part as well as (and before) your `conda activate` part. Otherwise, you'll get an error of `-bash: conda: command not found`.
 
-Finally, we need GATK itself, which as of version 4 contains the tool picard as well (which used to be installed separately).
+4. Finally, we need **GATK** itself, which as of version 4 contains the tool picard as well (which used to be installed separately).
 ```
 wget https://github.com/broadinstitute/gatk/releases/download/4.4.0.0/gatk-4.4.0.0.zip
 unzip  gatk-4.4.0.0.zip
@@ -67,9 +83,9 @@ module load ccs/java/jdk-17.0.2
 module load samtools-1.12-gcc-9.3.0-zo3utt7
 ```
 
-module load ccs/conda/python
+## Let's do it!
 
-	## step 6 takes ~30 min with 1M reads
+
 
 
 ## download vcftools
