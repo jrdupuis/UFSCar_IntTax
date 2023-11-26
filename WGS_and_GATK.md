@@ -84,11 +84,118 @@ module load samtools-1.12-gcc-9.3.0-zo3utt7
 ```
 
 ## Let's do it!
+_**data management note**_ This is a bit of a long process, so when I run it, I label my steps and all my files, so they are in-order and make sense on the cluster. I also make a directory called `RawData` where I store the raw data files or soft links to them. As you'll see, each step's output gets put in its own numbered directory. We will talk about each of these steps as we go along, but this approach leads to a directory structure like this in the end, where files (job submission file, output, and stdout/stderr) all group together by step:
+```
+[jdu282@mcc-login001 dorsalis_wgs]$ ls -l
+total 2855570
+-rw-r--r-- 1 jdu282 users       6095 Nov 22 14:19 1_fastp.17377445.err
+-rw-r--r-- 1 jdu282 users          0 Nov 22 14:14 1_fastp.17377445.out
+drwxr-xr-x 2 jdu282 users       4096 Nov 22 14:19 1_fastp_out
+-rw-r----- 1 jdu282 users       1104 Nov 22 14:13 1_fastp.sh
+-rw-r--r-- 1 jdu282 users      18644 Nov 22 14:29 2_bwa2.17377446.err
+-rw-r--r-- 1 jdu282 users        429 Nov 22 14:29 2_bwa2.17377446.out
+drwxr-xr-x 2 jdu282 users       4096 Nov 22 14:29 2_bwa2_out
+-rw-r----- 1 jdu282 users       1458 Nov 22 14:13 2_bwa2.sh
+-rw-r--r-- 1 jdu282 users      21172 Nov 22 14:31 3_picard.17377447.err
+-rw-r--r-- 1 jdu282 users         68 Nov 22 14:31 3_picard.17377447.out
+drwxr-xr-x 2 jdu282 users       4096 Nov 22 14:31 3_picard_out
+-rw-r----- 1 jdu282 users        991 Nov 22 14:13 3_picard.sh
+-rw-r--r-- 1 jdu282 users       1822 Nov 22 14:33 4_bamUtil_clip.17377448.err
+-rw-r--r-- 1 jdu282 users          0 Nov 22 14:32 4_bamUtil_clip.17377448.out
+drwxr-xr-x 2 jdu282 users       4096 Nov 22 14:33 4_bamUtil_clip_out
+-rw-r--r-- 1 jdu282 users        980 Nov 22 14:13 4_bamUtil_clip.sh
+-rw-r--r-- 1 jdu282 users          0 Nov 22 14:33 5_add_RG_bam.17377449.err
+-rw-r--r-- 1 jdu282 users          0 Nov 22 14:33 5_add_RG_bam.17377449.out
+drwxr-xr-x 2 jdu282 users       4096 Nov 22 14:35 5_add_RG_bam_out
+-rw-r--r-- 1 jdu282 users       1060 Nov 22 14:13 5_add_RG_bam_out.sh
+-rw-r--r-- 1 jdu282 users        862 Nov 22 14:13 6_gatk_hapcaller_header
+drwxr-xr-x 2 jdu282 users       4096 Nov 22 15:16 6_gatk_hapcaller_out
+-rw-r--r-- 1 jdu282 users        368 Nov 22 12:42 6_gatk_hapcaller_submit.sh
+-rw-r--r-- 1 jdu282 users      35842 Nov 22 15:30 7_GenomicsDBImport.17377478.err
+-rw-r--r-- 1 jdu282 users        738 Nov 22 15:30 7_GenomicsDBImport.17377478.out
+drwxr-xr-x 8 jdu282 users       4096 Nov 22 15:30 7_GenomicsDBImport_out
+-rw-r--r-- 1 jdu282 users       1215 Nov 22 15:19 7_GenomicsDBImport.sh
+drwxr-xr-x 2 jdu282 users       4096 Nov 22 15:41 8_GenotypeGVCFs
+-rw-r--r-- 1 jdu282 users      37105 Nov 22 15:41 8_genotypeGVCFs.17377480.err
+-rw-r--r-- 1 jdu282 users        275 Nov 22 15:41 8_genotypeGVCFs.17377480.out
+-rw-r--r-- 1 jdu282 users       1098 Nov 22 15:36 8_genotypeGVCFs.sh
+-rw-r--r-- 1 jdu282 users       2880 Nov 22 16:04 9_merged_0miss_minDP2.vcf.log
+-rw-r--r-- 1 jdu282 users     224849 Nov 22 16:04 9_merged_0miss_minDP2.vcf.recode.vcf
+-rw-r--r-- 1 jdu282 users  120307671 Nov 22 15:43 9_merged.vcf
+-rw-r--r-- 1 jdu282 users   14758973 Nov 22 15:41 9_merged.vcf.gz
+-rw-r--r-- 1 jdu282 users     327547 Nov 22 15:41 9_merged.vcf.gz.tbi
+-rw-r--r-- 1 jdu282 users     133788 Nov 22 14:19 fastp.json
+-rw-r--r-- 1 jdu282 users        721 Nov 22 14:26 genome.dict
+lrwxrwxrwx 1 jdu282 users         71 Nov 22 14:23 genome.fasta -> ../dorsalis_genomes/GCF_023373825.1_ASM2337382v1_chromosomes_renamed.fa
+-rw-r--r-- 1 jdu282 users 1013707204 Nov 22 14:24 genome.fasta.0123
+-rw-r--r-- 1 jdu282 users      17005 Nov 22 14:24 genome.fasta.amb
+-rw-r--r-- 1 jdu282 users        272 Nov 22 14:24 genome.fasta.ann
+-rw-r--r-- 1 jdu282 users 1647274325 Nov 22 14:26 genome.fasta.bwt.2bit.64
+-rw-r--r-- 1 jdu282 users        293 Nov 22 14:26 genome.fasta.fai
+-rw-r--r-- 1 jdu282 users  126713402 Nov 22 14:24 genome.fasta.pac
+lrwxrwxrwx 1 jdu282 users          6 Nov 22 14:13 list -> list_4
+-rw-r--r-- 1 jdu282 users         49 Nov 22 14:13 list_4
+-rw-r--r-- 1 jdu282 users       2844 Nov 22 14:13 list_full
+-rw-r--r-- 1 jdu282 users        324 Nov 22 15:26 list.sample_map
+-rw-r--r-- 1 jdu282 users       2805 Nov 22 16:00 out.log
+drwxr-xr-x 2 jdu282 users       4096 Nov 22 14:13 RawData
+-rw-r--r-- 1 jdu282 users         72 Nov 22 14:32 seq.list
+-rw-r--r-- 1 jdu282 users        390 Nov 22 15:34 seq.path.list
+```
+This approach requires a few special items in the job submission file. My job submission header for most of these files looks like this, with notes for a few of them:
+```
+#!/bin/bash
+#SBATCH --time 2:00:00     
+#SBATCH --job-name=1_fastp    # Job name, this forms the basis of what I call the job submission file, and all subsequent files
+#SBATCH --nodes=1        
+#SBATCH --ntasks=20       
+#SBATCH --account=coa_jdu282_brazil_bootcamp2023  
+#SBATCH --partition=normal
+#SBATCH --mail-type ALL    
+#SBATCH --mail-user julian.dupuis@uky.edu   
+#SBATCH --mem=8g
+#SBATCH -e %x.%j.err     # using %x in the -e and -o options applies the job name (from above) to these output files. %j does the same for job number
+#SBATCH -o %x.%j.out
+```
+Below, I'm pasting the actual body of the job submission script for each step. In general, the options we're using here follow the "gatk best practices". See info [here](https://gatk.broadinstitute.org/hc/en-us/articles/360035894711-About-the-GATK-Best-Practices) and [here](https://gatk.broadinstitute.org/hc/en-us/sections/360007226651-Best-Practices-Workflows).
 
+#### Step 1 fastp
+Fastp does general read trimming (based on quality score, kmer analysis, etc.), and generates trimmed reads and a html output. 
+```
+mkdir 1_fastp_out
+for f in `cat list`; do fastp --in1 ./RawData/$f.1Mreads.R1.fastq --in2 ./RawData/$f.1Mreads.R1.fastq --out1 ./1_fastp_out/$f.R1.fastpOut.fq.gz --out2 ./1_fastp_out/$f.R2.fastpOut.fq.gz  --detect_adapter_for_pe --trim_poly_g --thread 20 --overrepresentation_analysis --length_required 35 --compression 9 -h ./1_fastp_out/$f.html; done
+```
+Check out the html output to see what fastp can figure out for you.
 
+#### Step 2 bwa2
+BWA2, as we used before, will do the actual mapping of reads, and do it very fast for this application. We will also create a few index files for the reference genome here (hint, in my version of this, I created a soft link for the reference genome), and in the end, use samtools to order (via the sort function) the resulting sam/bam files. 
+```
+module load ccs/java/jdk-17.0.2
+module load samtools-1.12-gcc-9.3.0-zo3utt7
 
+bwa-mem2 index ./genome.fasta
+samtools faidx ./genome.fasta
+gatk CreateSequenceDictionary R=genome.fasta O=genome.dict  #really a picard tool here
 
-## download vcftools
+mkdir 2_bwa2_out
+for f in `cat list`; do echo "starting bwa on $f" ; bwa-mem2 mem -t 20 -M ./genome.fasta ./1_fastp_out/$f.R1.fastpOut.fq.gz ./1_fastp_out/$f.R2.fastpOut.fq.gz > ./2_bwa2_out/$f.paired.sam; done
+
+module load samtools-1.12-gcc-9.3.0-zo3utt7
+for f in `cat list`; do echo "starting samtools on $f"; samtools view -b ./2_bwa2_out/$f.paired.sam | samtools sort --threads 20 -o ./2_bwa2_out/$f.bam;  done
+```
+You can see some of my for loops have a bit more progress checking built into them (`do echo "starting samtools on $f";`). Not a necessity, but is sometimes nice to be able to track what specimens might be failing in a big list of data. 
+
+#### step 3 Markdups
+Here we're using a tool from picard (as mentioned above, now built into the gatk installation, as of version 4) to mark, and in our case, remove duplicate reads (those originating from the same template molecule. See info about these [here](https://gatk.broadinstitute.org/hc/en-us/articles/360037052812-MarkDuplicates-Picard-). 
+```
+mkdir 3_picard_out
+for f in `cat list`; do gatk MarkDuplicates I=./2_bwa2_out/$f.bam O=./3_picard_out/$f.dedup.bam M=./3_picard_out/$f.dupstats.txt VALIDATION_STRINGENCY=SILENT REMOVE_DUPLICATES=true SORTING_COLLECTION_SIZE_RATIO=0.1; done
+```
+
+#### step 4 
+
+## Let's look at the output
+### download vcftools
 VCFtools is a useful software for filtering and manipulating vcf files. It doesn't come as a pre-built binary, so we're going to have to install it like in the old days using configure, make, and make install. First let's download the software using git clone.
 ```
 git clone https://github.com/vcftools/vcftools.git
