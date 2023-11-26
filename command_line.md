@@ -94,6 +94,15 @@ Timestamp       Category        Message
 1598864411      INFO    User admin logged out
 ```
 
+### How many lines?
+`wc` is useful for counting characters/lines/words. You can use it as follows:
+```
+wc -l log.txt
+wc -c log.txt
+wc -w log.txt
+```
+Can you make sense of what each of those options are doing? <br>
+
 ### Find text with `grep`
 `grep` searches every line in the file for word(s) that you provide. If a line has matching text, grep will print that line to the screen; grep only searches for text and cannot make edits.
 
@@ -156,4 +165,28 @@ INFO
 
 A couple things to note:
 * Since we are reading our search terms from a file, `for item in [LIST]` is replaced by `while read item`
-* To input our search file, `< search.txt` is added to the end of the loop.
+* To input our search file, `< search.txt` is added to the end of the loop. <br>
+
+#### `cat list`
+Another useful way to use a for loop is to read from a list in a file, and then do something to every item in that list (i.e., filter reads or call SNPs for each individual listed in a given file). Create a file with the following lines, and name the file `beetles`: 
+```
+John
+Paul
+Ringo
+George
+```
+
+And then let's explore how a for loop can deal with the beetles by using something like the following:
+```
+for f in `cat beetles`; do echo $f; done
+```
+By using the tick character `, we can basically call a function within the line of another command. NOTE, the tick is not the same as a single quote; tick is usually to the left of your 1 key, while single quotes are over on the right side of the keyboard next to the enter key; make sure not to mix those up! <br>
+
+Or how about something like these. Think about what exactly the commands are doing with regard to the output. 
+```
+for f in `cat beetles`; do echo $f" and then enter some other text"; done
+for f in `cat beetles`; do echo $f | wc -c; done
+```
+What's the last command doing there?
+
+
