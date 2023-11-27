@@ -18,7 +18,7 @@ zcat GCF_023373825.1_ASM2337382v1_genomic.fna.gz | grep ">" | wc -l
 (the last one is a bit repetitive, but using `zcat` and piping is a nice way to access information that's in a compressed file)
 
 ### Downloading seqtk
-Now, let's download [se1tk](https://github.com/lh3/seqtk), and read how to install it. Do this in your personal folder in pscratch on MCC. 
+Now, let's download [seqtk](https://github.com/lh3/seqtk), and read how to install it. Do this in your personal folder in pscratch on MCC. 
 ```
 git clone https://github.com/lh3/seqtk.git
 cd seqtk
