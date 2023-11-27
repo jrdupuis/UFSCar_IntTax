@@ -252,7 +252,7 @@ echo "gatk HaplotypeCaller --java-options "-Xmx24g" -R ./genome.fasta -I ./5_add
 sbatch 6_gatk_hapcaller.$f.sh 
 done
 ```
-Can you figure what this script is doing?
+Can you figure what this script is doing? It's a pretty handy way to speed up jobs that are doing the same exact thing to multiple samples/libraries/etc., and more-or-less the non-computer-sciency alternative to what are called job arrays, which we'll talk about later on with regard to amplicon data.
 
 #### step 7
 To be able to do step 7 for each chromosome individually, we can make use of a separate list for each scaffold, which I call `seq.list`, which looks like this:
