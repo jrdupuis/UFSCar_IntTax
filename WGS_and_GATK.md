@@ -192,9 +192,122 @@ mkdir 3_picard_out
 for f in `cat list`; do gatk MarkDuplicates I=./2_bwa2_out/$f.bam O=./3_picard_out/$f.dedup.bam M=./3_picard_out/$f.dupstats.txt VALIDATION_STRINGENCY=SILENT REMOVE_DUPLICATES=true SORTING_COLLECTION_SIZE_RATIO=0.1; done
 ```
 
-#### step 4 
+#### step 4 BamUtil ClipOverlap
+The clipOverlap tool from BamUtil will clip overlapping read pairs from your paired end, mapped reads. See more [here](https://genome.sph.umich.edu/wiki/BamUtil:_clipOverlap). 
+```
+module load ccs/conda/python
+conda activate /scratch/jdu282/bamUtil_env
 
-## Let's look at the output
+mkdir 4_bamUtil_clip_out
+for f in `cat list`; do bam clipOverlap --in 3_picard_out/$f.dedup.bam --out 4_bamUtil_clip_out/$f.clipped.bam --stats; done
+```
+
+#### step 5 adding ReadGroups to your bams
+Read groups are basically a set of reads that originated from the same source. This could be from the same sequencing lane or from the same library prep method or from the same subpool in pooled libraries. And sometimes if you have multiple read groups, you might want to incorporate that information into SNP calling (e.g., when calibrating base score quality based on the data). So here we're applying a read group to the data. In this example, the authors didn't provide much information on subpooling or multiple sequencing lanes, so we're just applying the same read group to all data (but if you had multiple read groups, you'd want to apply a different read group ID (`'-r ID:[name]`) to each read group. We're also indexing the individual bam files at this point, since it's required in the next step. 
+```
+module load samtools-1.12-gcc-9.3.0-zo3utt7
+
+mkdir 5_add_RG_bam_out
+for f in `cat list`; do samtools addreplacerg -r ID:neb_wgs -r LB:L1 -r SM:$f.clipped.bam -o ./5_add_RG_bam_out/$f.rg.bam ./4_bamUtil_clip_out/$f.clipped.bam; done
+for f in `cat list`; do samtools index ./5_add_RG_bam_out/$f.rg.bam; done
+```
+
+### steps 6, 7, and 8: variant calling
+Ok, now onto the actual variant calling with GATK. There's a lot of ways to do this, depending on the size of the genome, number of individuals, how long you want it to take, etc. See [here](https://gatk.broadinstitute.org/hc/en-us/articles/360035531412-HaplotypeCaller-in-a-nutshell) and [here](https://gatk.broadinstitute.org/hc/en-us/articles/360037225632-HaplotypeCaller) for more information on step 6 specifically (but note, that the former there ignores doing multiple individuals and creating individual specific gvcf files, `-ERC GVCF` option), and [here](https://gatk.broadinstitute.org/hc/en-us/articles/360036883491-GenomicsDBImport) for more info on step 7. Step 8 is relatively simple, but is really only needed when following steps 6 and 7 as we are doing here. The basic order of operations is: <br>
+1. step 6 calls variants in individual specimens across the whole genome, and saves these as `g.vcf` files. This step can be somewhat memory intensive, so we get around this by submitting each individual as a separate job.  
+2. step 7 then creates databases that store variant information for all individuals at once. The problem is, this step is very memory intensive, and if your genome is big, even more so. So we actually do this one scaffold/chromosome at a time. In this example, we will call this with a for loop like we have all the preceeding steps, but you could also do like we did in step 6 for big scaffolds. 
+3. step 8 then creates `vcf` files from each scaffold and then in a final step combines the individual `vcf`s into one final `vcf` file for all individuals and all scaffolds.
+
+#### step 6
+We do this fancy job submission process by having two files to submit the jobs. First we have a header file, which I name `6_gatk_hapcaller_header ` and looks like this:
+```
+#!/bin/bash
+#SBATCH --time 2:00:00     # Time requested to run the job (format hours:minutes:seconds or days-hours:minutes)
+#SBATCH --job-name=6_gatk_hapcaller  # Job name
+#SBATCH --nodes=1        # Number of nodes to allocate. Same as SBATCH -N
+#SBATCH --ntasks=20       # Number of cores to allocate. Same as SBATCH -n
+#SBATCH --account=coa_jdu282_brazil_bootcamp2023  # Project allocation account name; use coa_jdu282_brazil_bootcamp2023
+#SBATCH --partition=normal
+#SBATCH --mail-type ALL    # Send email when job starts/ends/fails; other value option: ALL, NONE, BEGIN, END, FAIL, REQUEUE
+#SBATCH --mail-user julian.dupuis@uky.edu   # your email to receive notifications about submitted job 
+#SBATCH --mem=32g
+#SBATCH -e %x.%j.err
+#SBATCH -o %x.%j.out
+
+module load ccs/conda/python
+module load ccs/java/jdk-17.0.2
+module load samtools-1.12-gcc-9.3.0-zo3utt7
+```
+You can see it's basically just the top parts of the job submission file without the actual commands. Then I have a simple bash file I call `cat 6_gatk_hapcaller_submit.sh` which contains the following:
+```
+#!/bin/bash
+
+mkdir 6_gatk_hapcaller_out
+
+for f in `cat list`; 
+do
+echo $f
+cat 6_gatk_hapcaller_header > 6_gatk_hapcaller.$f.sh
+echo "gatk HaplotypeCaller --java-options "-Xmx24g" -R ./genome.fasta -I ./5_add_RG_bam_out/$f.rg.bam --native-pair-hmm-threads 3 -ERC GVCF -O ./6_gatk_hapcaller_out/$f.g.vcf"  >> 6_gatk_hapcaller.$f.sh
+sbatch 6_gatk_hapcaller.$f.sh 
+done
+```
+Can you figure what this script is doing?
+
+#### step 7
+To be able to do step 7 for each chromosome individually, we can make use of a separate list for each scaffold, which I call `seq.list`, which looks like this:
+```
+Chromosome1
+Chromosome2
+Chromosome3
+Chromosome4
+Chromosome5
+Chromosome6
+```
+And the job submission script would look like this:
+```
+module load ccs/java/jdk-17.0.2
+
+mkdir 7_GenomicsDBImport_out
+
+for f in `cat list`; do gatk IndexFeatureFile -I ./6_gatk_hapcaller_out/$f.g.vcf; done
+
+for f in `cat seq.list`; do 
+echo "Starting $f"
+gatk --java-options "-Xmx48g -Xms48g" GenomicsDBImport --genomicsdb-workspace-path ./7_GenomicsDBImport_out/$f.db --batch-size 50 -L $f --sample-name-map ./list.sample_map -L $f --reader-threads 3
+echo "Finishing $f"
+done
+```
+You can see in that first for loop, we're doing additional indexing of each `g.vcf` file (could be done as a separate step or after the code in the last file), and then the second for loop, this one not in 1-line format and with some extra `echo`'s, we're creating the databases for each scaffold. 
+
+#### step 8
+Again, a two-step process here, first creating `vcf` files from the `seq.list` file, and then providing another input file that basically tells gatk where to find the scaffold-specific `vcf` files, which I call `seq.path.list` and looks like this (but obviously will have different paths when you are doing this):
+```
+/scratch/jdu282/dorsalis_wgs2/8_GenotypeGVCFs/Chromosome1.vcf.gz
+/scratch/jdu282/dorsalis_wgs2/8_GenotypeGVCFs/Chromosome2.vcf.gz
+/scratch/jdu282/dorsalis_wgs2/8_GenotypeGVCFs/Chromosome3.vcf.gz
+/scratch/jdu282/dorsalis_wgs2/8_GenotypeGVCFs/Chromosome4.vcf.gz
+/scratch/jdu282/dorsalis_wgs2/8_GenotypeGVCFs/Chromosome5.vcf.gz
+/scratch/jdu282/dorsalis_wgs2/8_GenotypeGVCFs/Chromosome6.vcf.gz
+```
+Here's what the job submission script looks like. The location option in the `-V gendb` option is a bit finicky, but written like this the job script needs to be in the same directory as the `7_GenomicsDBImport_out`, which contains the output of step 7. 
+```
+module load ccs/java/jdk-17.0.2
+
+mkdir 8_genotypeGVCFs
+
+for f in `cat seq.list`; do
+echo "Starting $f"
+gatk --java-options "-Xmx48g" GenotypeGVCFs -R ./genome.fasta -V gendb://7_GenomicsDBImport_out/$f.db -O ./8_genotypeGVCFs/$f.vcf.gz 
+echo "Finishing $f"
+done
+
+gatk MergeVcfs I=seq.path.list O=9_merged.vcf.gz
+```
+
+## THE OUTPUT...
+With those scripts, the final output is called `9_merged.vcf.gz`, and for a real dataset, this can be a big file (tens to hundreds of Gb). 
+
 ### download vcftools
 VCFtools is a useful software for filtering and manipulating vcf files. It doesn't come as a pre-built binary, so we're going to have to install it like in the old days using configure, make, and make install. First let's download the software using git clone.
 ```
@@ -216,4 +329,7 @@ module load zlib-1.2.11-gcc-8.4.1-b4szoqs
 ```
 
 # For dealing with 4 individual, 1M reads datasets
+To get something meaningful, let's run this and we can talk about it as a group.
+```
 /scratch/jdu282/vcftools/bin/vcftools --vcf 9_merged.vcf --remove-indels --max-missing 1.0 --minDP 2 --recode --out 9_merged_0miss_minDP2.vcf
+```
