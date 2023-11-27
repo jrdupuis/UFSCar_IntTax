@@ -65,6 +65,12 @@ There's a few options to solve this issue, and increase the flexibility as to wh
 ```
 And we can now cd to anywhere, and be able to call seqtk using `/pscratch/jdu282_brazil_bootcamp2023/programs/seqtk/seqtk`. Give it a try by cd'ing somewhere else and calling that command. 
 
+We could also make a symbolic link (or soft link) in some directory that is basically a shotcut link to where we installed seqtk. So if you `cd $HOME` and then do the following, you've created a shortcut to this install position in your home directory.
+```
+ln -s /pscratch/jdu282_brazil_bootcamp2023/programs/seqtk/seqtk
+```
+NOTE, here we're referring to the executable file itself with the soft link. So if you're in your home directory, you can then do `./seqtk`, and you should get a sensible output.
+
 ### Knowing your PATH
 The other option is to add seqtk to our PATH. $PATH is an environment that the cluster system (or your own personal computer) looks in to find executables and software. We can see what's in our PATH with `echo $PATH`. The output to that might look complicated, but it's just a long list of directory locations, separated by `:` showing all the locations your system will look for a command every time you type that command. We can add other locations to PATH with the following:
 ```
