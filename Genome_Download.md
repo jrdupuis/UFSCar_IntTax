@@ -93,7 +93,7 @@ PATH=$PATH:$HOME/.local/bin:$HOME/bin
 
 export PATH
 ```
-Now below that, you can paste in the `export PATH` command that you used before. So it should look something like this (not with my username in there though):
+Now below that, you can paste in the `export PATH` command that you used before. So it should look something like this:
 ```
 # .bash_profile
 
