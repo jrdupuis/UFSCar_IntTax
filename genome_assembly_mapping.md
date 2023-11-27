@@ -184,7 +184,8 @@ Now you can head/tail/nano that file and make some sense of it, but look at the 
 
 And what about some stats from that bam file? 
 ```
-samtools stats Bdor_B70_SRR22045853.bam | grep ^GCD | cut -f 2-
+samtools stats Bdor_B70_SRR22045853.bam         # lots of stuff in here, but at least they tell you how to parse it!
+samtools stats Bdor_B70_SRR22045853.bam | grep ^SN | cut -f 2-
 ```
 
 You can get a lot of info from your mapped reads, see [here](https://bookdown.org/content/24942ad6-9ed7-44e9-b214-1ea8ba9f0224/learning-the-bam-format.html) for other ideas.
