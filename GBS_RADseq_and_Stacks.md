@@ -10,6 +10,8 @@ for f in `ls /pscratch/jdu282_brazil_bootcamp2023/data/Bdor_GBS`; do ln -s /pscr
 ```
 Can you follow what's going on there? If not, break it down to what is happening in the first part (`for f in blah`) and see if you can deduce it.
 
+There are also 2 list files provided `Bdor_GBS_list` for the full list of individuals and `Bdor_GBS_list_small` with just a handful of specimens for fast run times.
+
 ## Installing Stacks
 Stacks requires a configure/make/make install, as stated in the [manual](https://catchenlab.life.illinois.edu/stacks/manual/#install). But thankfully it's a painless install with default compilers on MCC.
 ```
