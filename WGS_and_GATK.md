@@ -142,7 +142,7 @@ drwxr-xr-x 2 jdu282 users       4096 Nov 22 14:13 RawData
 -rw-r--r-- 1 jdu282 users         72 Nov 22 14:32 seq.list
 -rw-r--r-- 1 jdu282 users        390 Nov 22 15:34 seq.path.list
 ```
-NOTE: All of the steps before step 6 take under 5 minutes to run. Some of them only 1-2 minutes. 
+NOTE: All of the steps before step 6 take under 5 minutes to run. Some of them only 1-2 minutes. Step 6 takes ~30 minutes or so, and steps 7 and 8 are around 5 minutes each. 
 
 This approach requires a few special items in the job submission file. My job submission header for most of these files looks like this, with notes for a few of them:
 ```
