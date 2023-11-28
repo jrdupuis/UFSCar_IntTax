@@ -100,7 +100,7 @@ Now let's edit that `batch_header.sh` content to contain an actual command that 
 #SBATCH --ntasks=1
 #SBATCH --account=coa_jdu282_brazil_bootcamp2023
 #SBATCH --mail-type ALL
-#SBATCH --mail-user julian.dupuis@uky.edu
+#SBATCH --mail-user [enter your email here]
 
 echo starting
 sleep 10
