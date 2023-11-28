@@ -12,14 +12,19 @@ ___
 ## Transferring files 
 
 ### Copy files from your computer to the cluster
+This requires you to be in the directory on your local machine where the `local_file` is (i.e. you should be in a terminal shell on your local machine, not ssh'ed into the cluster).
 `scp local_file user_name@server_address:/path/to/cluster/directory`
 
 ### Copy files from the cluster to your computer
+Again, this is from a location in your local machine (not ssh'ed into the cluster).
 `scp user_name@server_address:/path/to/cluster/remote_file /path/to/local/directory`<br>
 
 If the destination is the current working directory, `scp user_name@server_address:/path/to/cluster/file.txt .` can be used instead of the full path.
 
 **_Question:_** How do you modify the `scp` command to copy a directory?
+
+### Another way to transfer files
+The command `sftp` provides another way to transfer files, but this time in a more interactive way. It's basically just like ssh'ing, but you enter a special shell that allows you to `get` and `put` files. So if you're on your local machine in a directory with a file you want to transfer, you can go `sftp [username]@mcc.uky.edu` and will be prompted to enter your PW. Once you hit enter, you will be in your home directory but with the prompt `sftp> `. Now you can `cd` around your directory structure in MCC, `ls` and `pwd` to your heart's content, and find the location you want to put a file. Then you can simply type `put [filename]` (note, this is the file name on your local machine that you want to transfer to the cluster) and it will transfer. Likewise, to get a file off the cluster you can `get [filename]` and it will transfer to the local machine. 
 
 ___
 
