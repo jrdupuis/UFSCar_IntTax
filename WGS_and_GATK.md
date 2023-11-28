@@ -84,7 +84,7 @@ module load samtools-1.12-gcc-9.3.0-zo3utt7
 ```
 
 ## Let's do it!
-_**data management note**_ This is a bit of a long process, so when I run it, I label my steps and all my files, so they are in-order and make sense on the cluster. I also make a directory called `RawData` where I store the raw data files or soft links to them. As you'll see, each step's output gets put in its own numbered directory. We will talk about each of these steps as we go along, but this approach leads to a directory structure like this in the end, where files (job submission file, output, and stdout/stderr) all group together by step:
+_**data management note**_ This is a bit of a long process, so when I run it, I label my steps and all my files, so they are in order and make sense on the cluster. I also make a directory called `RawData` where I store the raw data files or soft links to them. As you'll see, each step's output gets put in its own numbered directory. We will talk about each of these steps as we go along, but this approach leads to a directory structure like this in the end, where files (job submission file, output, and stdout/stderr) all group together by step:
 ```
 [jdu282@mcc-login001 dorsalis_wgs]$ ls -l
 total 2855570
