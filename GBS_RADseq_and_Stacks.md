@@ -4,6 +4,12 @@ Let's take a look at this [bioproject](https://www.ncbi.nlm.nih.gov/bioproject/P
 What about the metadata for this dataset? If you click on the SRA link (link to 798 SRA files), and then click on "send to" > "file" > and "run info", that opens up the information associated with each specimen through their BioSample and SRA submission. But not all pertinent info is there (country of origin, collection locality, etc.). 
 But if you go to the publication and look at Table S1, the authors included SRR numbers and pertinent locality information, so we're in luck.
 
+This data is downloaded (just as we did before with sratoolkit) and is here `/pscratch/jdu282_brazil_bootcamp2023/data/Bdor_GBS`. So create a directory for this analysis in your `scratch` or in your named dir in `pscratch`, and let's soft link all those files into your directory of choice, so we don't have to bog down NCBI with duplicate downloads. Here's a quick way to do so:
+```
+for f in `ls /pscratch/jdu282_brazil_bootcamp2023/data/Bdor_GBS`; do ln -s /pscratch/jdu282_brazil_bootcamp2023/data/Bdor_GBS/$f; done
+```
+Can you follow what's going on there? If not, break it down to what is happening in the first part (`for f in blah`) and see if you can deduce it.
+
 ## Installing Stacks
 Stacks requires a configure/make/make install, as stated in the [manual](https://catchenlab.life.illinois.edu/stacks/manual/#install). But thankfully it's a painless install with default compilers on MCC.
 ```
