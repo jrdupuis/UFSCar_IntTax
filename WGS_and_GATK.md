@@ -231,7 +231,7 @@ We do this fancy job submission process by having two files to submit the jobs. 
 #SBATCH --account=coa_jdu282_brazil_bootcamp2023  # Project allocation account name; use coa_jdu282_brazil_bootcamp2023
 #SBATCH --partition=normal
 #SBATCH --mail-type ALL    # Send email when job starts/ends/fails; other value option: ALL, NONE, BEGIN, END, FAIL, REQUEUE
-#SBATCH --mail-user julian.dupuis@uky.edu   # your email to receive notifications about submitted job 
+#SBATCH --mail-user [your email]   # your email to receive notifications about submitted job 
 #SBATCH --mem=32g
 #SBATCH -e %x.%j.err
 #SBATCH -o %x.%j.out
