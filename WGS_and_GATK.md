@@ -8,8 +8,8 @@ We're going to use the data from this [BioProject](https://www.ncbi.nlm.nih.gov/
 
 Downloading these SRAs is a two step process. First we need to do a `prefetch` based on the SRR numbers, and then we actually get the fastq file using `fastq-dump`. So set up a job submission file and add these two commands:
 ```
-for f in `cat [list of SRR accessions]`; do ./sratoolkit.3.0.7-centos_linux64/bin/prefetch $f.sra; done
-for f in `cat [list of SRR accessions]`; do ./sratoolkit.3.0.7-centos_linux64/bin/fastq-dump --outdir fastq --gzip --skip-technical  --readids --read-filter pass --dumpbase --split-3 --clip $f/$f.sra; done
+for f in `cat [list of SRR accessions]`; do /pscratch/jdu282_brazil_bootcamp2023/programs/sratoolkit.3.0.7-centos_linux64/bin/prefetch/prefetch $f.sra; done
+for f in `cat [list of SRR accessions]`; do /pscratch/jdu282_brazil_bootcamp2023/programs/sratoolkit.3.0.7-centos_linux64/bin/prefetch/fastq-dump --outdir fastq --gzip --skip-technical  --readids --read-filter pass --dumpbase --split-3 --clip $f/$f.sra; done
 ```
 Don't submit that with the full list as above. It's a pretty slow process (to do that full list, I would give it like 48 hours to be safe), and we don't need everyone downloading from NCBI at the same time. **So, as a class, let's split up the list and have everyone submit a unique set of SRA downloads!**
 
