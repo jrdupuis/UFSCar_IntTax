@@ -154,7 +154,7 @@ This approach requires a few special items in the job submission file. My job su
 #SBATCH --account=coa_jdu282_brazil_bootcamp2023  
 #SBATCH --partition=normal
 #SBATCH --mail-type ALL    
-#SBATCH --mail-user julian.dupuis@uky.edu   
+#SBATCH --mail-user email.email   
 #SBATCH --mem=8g
 #SBATCH -e %x.%j.err     # using %x in the -e and -o options applies the job name (from above) to these output files. %j does the same for job number
 #SBATCH -o %x.%j.out
