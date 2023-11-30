@@ -473,4 +473,4 @@ strata(snps) <- snps_other
 setPop(snps) <- ~pop    # vs. ~global
 popNames(snps)
 
-#### Your mission, should you choose to accept it, is to explore this SNP dataset as we did for the nancycats, microbov, and ABBC swallowtail butterfly microsatellite datasets. 
+## Your mission, should you choose to accept it, is to explore this SNP dataset as we did for the nancycats, microbov, and ABBC swallowtail butterfly microsatellite datasets. ALTERNATIVELY, you could load in another SNP dataset (like one you've generated from WGS or RAD/GBS data) and analyze it yourself!
