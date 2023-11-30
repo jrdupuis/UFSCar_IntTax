@@ -128,7 +128,7 @@ ___
 ### Get the sequence data
 **_Task:_** Make symlinks to the sequencing reads for alignment. <br>
 1. Go into your "sequencing_reads" folder. <br>
-2. Run `ln -s /pscratch/jdu282_brazil_bootcamp2023/data/Bdor_reads/mapping/Bdor_B70_SRR22045853_R1.fastq` <br>
+2. Run `ln -s //pscratch/jdu282_brazil_bootcamp2023/data/Bdor_assembly_mapping_reads/Bdor_B70_SRR22045853_R1.fastq` <br>
 3. Repeat for Bdor_B70_SRR22045853_R2.fastq. <br>
 
 Learn more about the data [here](https://www.ncbi.nlm.nih.gov/sra/?term=SRR22045853)
