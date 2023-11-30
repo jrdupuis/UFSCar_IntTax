@@ -4,7 +4,7 @@ Let's take a look at this [bioproject](https://www.ncbi.nlm.nih.gov/bioproject/P
 What about the metadata for this dataset? If you click on the SRA link (link to 798 SRA files), and then click on "send to" > "file" > and "run info", that opens up the information associated with each specimen through their BioSample and SRA submission. But not all pertinent info is there (country of origin, collection locality, etc.). 
 But if you go to the publication and look at Table S1, the authors included SRR numbers and pertinent locality information, so we're in luck.
 
-This data is downloaded (just as we did before with sratoolkit) and is here `/pscratch/jdu282_brazil_bootcamp2023/data/Bdor_GBS`. So create a directory for this analysis in your `scratch` or in your named dir in `pscratch`, and let's soft link all those files into your directory of choice, so we don't have to bog down NCBI with duplicate downloads. Here's a quick way to do so:
+This data is downloaded (just as we did before with sratoolkit) and is here `/pscratch/jdu282_brazil_bootcamp2023/data/Bdor_GBS` (and I already renamed them!). So create a directory for this analysis in your `scratch` or in your named dir in `pscratch`, and let's soft link all those files into your directory of choice, so we don't have to bog down NCBI with duplicate downloads. Here's a quick way to do so:
 ```
 for f in `ls /pscratch/jdu282_brazil_bootcamp2023/data/Bdor_GBS`; do ln -s /pscratch/jdu282_brazil_bootcamp2023/data/Bdor_GBS/$f; done
 ```
@@ -77,6 +77,7 @@ dorsalis_Hawaii_ms05004	1
 dorsalis_Hawaii_ms05015	1
 dorsalis_Vietnam_ms05029	1
 dorsalis_Vietnam_ms05030	1
+...
 ```
 where "1" indicates that all 6 of these individuals belong to the same population. This can be used to apply population-specific filters (see [here](https://catchenlab.life.illinois.edu/stacks/comp/populations.php)), and we'll talk about that as a group. In this case, I'm simplifying our lives and just treating the whole dataset like one big population. To easily create the `popmap` file, we can use our list of individuals and do this:
 ```
@@ -85,3 +86,4 @@ sed "s/[a-zA-Z]*$/\t1/" list > list_popmap
 
 You'll see that at the end of that job script, there is a commented-out command to call `populations`. `populations` is the final stage of both the de-novo and reference-based Stacks pipelines. It basically takes the catalog that Stacks generates and generates final SNP files of various formats and with various filters. We will talk as a group about my philosophy for filtering SNPs in stacks versus after the fact, but I often end up running populations a few times, either to generate additional data formats for the SNP dataset, or to apply different filters to see what their effect is on the final dataset. So I included a line to run `populations` by itself here (this is one of the individual scripts, similar to `cstacks` or `gstacks` that I mentioned earlier). 
 
+This entire dataset takes about 7 hours to run on MCC. You could also subset the specimens to decrease this time. Given that I've already renamed all the files with their locality information, the best approach here might be to pick 3-4 individuals from a few different species or from different localities to make a small dataset with some taxonomic/geographic variation. 
