@@ -45,3 +45,6 @@ done
 sleep 1
 done
 ```
+You can see that it sets up a directory structure for the job submission files (`$qsub_folder`), the output and error dirs (`out` and `err`), and then is a double for loop to generate jobs for a set of K values (`for k in `), and a set of replicates per K (`for r in `). We'll talk about the use of the `-D` option and the `sleep` commands, and why those are important.  
+
+This command (and these associated file) can be submitted with `bash structure.sh`. Make sure all required files (`mainparams`, `extraparams`) are in the same directory as `structure.sh` and `structure_qsub_header`. This set of jobs should take <10 minutes to run, and we'll walk through the outputs.
