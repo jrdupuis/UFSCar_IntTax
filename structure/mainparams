@@ -1,0 +1,57 @@
+KEY PARAMETERS FOR THE PROGRAM structure.  YOU WILL NEED TO SET THESE
+IN ORDER TO RUN THE PROGRAM.  VARIOUS OPTIONS CAN BE ADJUSTED IN THE
+FILE extraparams.
+
+
+"(int)" means that this takes an integer value.
+"(B)"   means that this variable is Boolean 
+        (ie insert 1 for True, and 0 for False)
+"(str)" means that this is a string (but not enclosed in quotes!) 
+
+Data File
+
+#define INFILE ABBC_8Jan2015.str   // (str) name of input data file
+#define OUTFILE XXX  //(str) name of output data file
+
+#define NUMINDS   781   // (int) number of diploid individuals in data file
+#define NUMLOCI   10   // (int) number of loci in data file
+#define LABEL     1     // (B) Input file contains individual labels
+#define POPDATA   1     // (B) Input file contains a population 
+                             identifier
+#define POPFLAG   0     // (B) Input file contains a flag which says 
+                              whether to use popinfo when USEPOPINFO==1
+#define PHENOTYPE 0     // (B) Input file contains phenotype information
+#define EXTRACOLS 0     // (int) Number of additional columns of data 
+                             before the genotype data start.
+#define PHASEINFO 0     // (B) the data for each individual contains a line
+                                  indicating phase
+#define MARKOVPHASE  0  // (B) the phase info follows a Markov model.
+
+#define MISSING      -9 // (int) value given to missing genotype data
+#define PLOIDY       2  // (int) ploidy of data
+
+#define ONEROWPERIND 1  // (B) store data for individuals in a single line
+#define MARKERNAMES  0  // (B) data file contains row of marker names
+#define MAPDISTANCES 0  // (B) data file contains row of map distances 
+                             // between loci
+
+
+Program Parameters
+
+#define MAXPOPS    2    // (int) number of populations assumed
+#define BURNIN    100000 // (int) length of burnin period
+#define NUMREPS   500000 // (int) number of MCMC reps after burnin
+
+Command line options:
+
+-m mainparams
+-e extraparams
+-s stratparams
+-K MAXPOPS 
+-L NUMLOCI
+-N NUMINDS
+-i input file
+-o output file
+
+
+
