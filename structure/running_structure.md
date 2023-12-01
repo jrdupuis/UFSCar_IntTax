@@ -1,0 +1,4 @@
+## Structure (Pritchard et al. 2000)
+STRUCTURE is a very commonly used program in population genetics to assess population clustering/structure. See more info [here](https://web.stanford.edu/group/pritchardlab/structure.html). 
+
+Although premade binaries are available for structure, they are compiled for a 32 bit system, and MCC is 64 bit, so we need to make from scratch. I've installed structure here `/pscratch/jdu282_brazil_bootcamp2023/programs/structure_kernel_src/` and the executable is called `structure`, but you can also download it from [here](https://web.stanford.edu/group/pritchardlab/structure_software/release_versions/v2.3.4/html/structure.html) (wget the "c code" option under "Download source code", and `make` within that directory). Structure needs 3 input files, a `.str` file containing genotype data, and two parameter files: `mainparams` and `extraparams`. The software download contains examples of these files. 
