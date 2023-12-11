@@ -240,7 +240,7 @@ module load ccs/conda/python
 module load ccs/java/jdk-17.0.2
 module load samtools-1.12-gcc-9.3.0-zo3utt7
 ```
-You can see it's basically just the top parts of the job submission file without the actual commands. Then I have a simple bash file I call `cat 6_gatk_hapcaller_submit.sh` which contains the following:
+You can see it's basically just the top parts of the job submission file without the actual commands. Then I have a simple bash file I call `6_gatk_hapcaller_submit.sh` which contains the following:
 ```
 #!/bin/bash
 
