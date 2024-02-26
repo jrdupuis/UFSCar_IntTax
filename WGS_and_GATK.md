@@ -14,7 +14,7 @@ for f in `cat [list of SRR accessions]`; do /pscratch/jdu282_brazil_bootcamp2023
 Don't submit that with the full list as above. It's a pretty slow process (to do that full list, I would give it like 48 hours to be safe), and we don't need everyone downloading from NCBI at the same time. **So, as a class, let's split up the list and have everyone submit a unique set of SRA downloads!**
 
 ### Let's move on with some pre-downloaded data
-While those jobs are running, let's deal with a few individuals that I've already downloaded, which are available here:`/pscratch/jdu282_brazil_bootcamp2023/data/Bdor_pop_WGS_SRA_data`  You can see we have paired-end data for four individuals here, with the following SRA numbers and metadata:
+While those jobs are running, let's deal with a few individuals that I've already downloaded, which are available here:`/pscratch/jdu282_brazil_bootcamp2023/data/Bdor_pop_WGS_SRA_data` (If on a different cluster, see below to right above "Let's do some installs!" for subsampled files). You can see we have paired-end data for four individuals here, with the following SRA numbers and metadata:
 ```
 SRR22045704	Mayotte	Dembéni	IO	Bactrocera dorsalis	-12.844351	45.166149	May_Dem_6	B104	Illumina PE150	11/28/19
 SRR22045705	Grande Comore	Mandzissani	IO	Bactrocera dorsalis	-11.887344	43.406058	Com_Gra_10	B25	Illumina PE150	9/20/20
@@ -42,6 +42,8 @@ Now you should have 4 sets of reads that look like this:
 Mayotte_Dembeni_B104.1Mreads.R1.fastq
 Mayotte_Dembeni_B104.1Mreads.R2.fastq
 ```
+
+Subsampled reads (only 250,000 reads per specimen, not 1M reads as above) are also available [here](https://github.com/jrdupuis/UFSCar_IntTax/tree/main/assets/Bdor_pop_WGS_SRA_data_1M).
 
 ### Let's do some installs!
 The rest of the steps for calling SNPs with GATK require a few other pieces of software, which will let us try several different ways for installing software on a cluster. We're going to go through this together, but you can always find info about how to install these on their websites, often easiest if you just google "[software] installation".
