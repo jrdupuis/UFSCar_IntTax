@@ -2,7 +2,7 @@
 Goal: (1) Create a _Bactrocera dorsalis_ genome assembly from small-insert, paired-end (150 bp) shotgun Illumina sequencing reads. (2) Map reads from a sequenced individual to the assembly.
 
 ## Assembly read data
-The sequencing reads are available in the course folder on MCC `/pscratch/jdu282_brazil_bootcamp2023/data/Bdor_assembly_reads`
+The sequencing reads are available in the course folder on MCC `/pscratch/jdu282_brazil_bootcamp2023/data/Bdor_assembly_reads` (or see below for download instructions)
 
 Instead of copying the files, we are going to make symlinks (symbolic links). Why? To minimize memory use--this way, the course only has one copy of the data instead of everyone in the class downloading the same 10 GB files. 
 
