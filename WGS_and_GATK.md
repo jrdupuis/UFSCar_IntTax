@@ -43,7 +43,7 @@ Mayotte_Dembeni_B104.1Mreads.R1.fastq
 Mayotte_Dembeni_B104.1Mreads.R2.fastq
 ```
 
-Subsampled reads (only 250,000 reads per specimen, not 1M reads as above) are also available [here](https://github.com/jrdupuis/UFSCar_IntTax/tree/main/assets/Bdor_pop_WGS_SRA_data_1M).
+*Subsampled reads (only 250,000 reads per specimen, not 1M reads as above) are also available [here](https://github.com/jrdupuis/UFSCar_IntTax/tree/main/assets/Bdor_pop_WGS_SRA_data_1M).*
 
 ### Let's do some installs!
 The rest of the steps for calling SNPs with GATK require a few other pieces of software, which will let us try several different ways for installing software on a cluster. We're going to go through this together, but you can always find info about how to install these on their websites, often easiest if you just google "[software] installation".
