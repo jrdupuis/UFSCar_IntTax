@@ -14,6 +14,14 @@ Instead of copying the files, we are going to make symlinks (symbolic links). Wh
 5. Run `ls` and you should see the two files in light blue text.
 
 These reads were downloaded from the NCBI SRA (short read archive). Learn more about the data [here](https://www.ncbi.nlm.nih.gov/sra/SRX306436[accn])
+Instead of accessing the data from the course folder, the following will install sratoolkit, prefetch the SRA, and download the raw data.
+```
+wget https://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/3.0.10/sratoolkit.3.0.10-centos_linux64.tar.gz
+tar -zxvf sratoolkit.3.0.10-centos_linux64.tar.gz
+./sratoolkit.3.0.10-centos_linux64/bin/prefetch SRR901643.sra    # note, takes a few minutes
+./sratoolkit.3.0.10-centos_linux64/bin/fastq-dump --outdir fastq --gzip --skip-technical  --readids --read-filter pass --dumpbase --split-3 --clip SRR901643.sra    # note, takes 30 minutes or so
+# raw data is then in ./fastq
+```
 
 ___
 
