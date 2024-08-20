@@ -46,7 +46,7 @@ Mayotte_Dembeni_B104.1Mreads.R1.fastq
 Mayotte_Dembeni_B104.1Mreads.R2.fastq
 ```
 
-##### Data ready to roll
+#### Data, ready to roll!:
 *Subsampled reads (only 250,000 reads per specimen, not 1M reads as above) are also available [here](https://github.com/jrdupuis/UFSCar_IntTax/tree/main/assets/Bdor_pop_WGS_SRA_data_1M).*
 
 ### Let's do some installs!
