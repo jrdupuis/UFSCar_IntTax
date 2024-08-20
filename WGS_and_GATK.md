@@ -1,5 +1,6 @@
 # Read mapping and SNP calling using GATK
 ### Getting some data
+*note, if you just want to get to SNP-calling and the good stuff, data that's ready to rock is [here](# Data ready to roll) *
 For this we're going to need a reference genome as well as some shotgun data to map to the reference and call SNPs from. We'll use the modified *B. dorsalis* PacBio reference genome for the former.
 
 For the shotgun reads, we'll need to download these from multiple individuals, which adds repetitiveness to this task. To download from NCBI, we're going to need to use SRAtoolkit which is available [here](https://github.com/ncbi/sra-tools/wiki/01.-Downloading-SRA-Toolkit). There is a pre-installed version of SRAtoolkit here `/pscratch/jdu282_brazil_bootcamp2023/programs/sratoolkit.3.0.7-centos_linux64/bin`, so you can use this full path (or add it to your bash_profile) to access the tools `prefetch` and `fastq-dump` that we use below. Alternatively, `wget` one of the downloadables at that link, uncompress it (`tar -zxvf`), and compiled executables should be in the `bin` directory in that download.
@@ -43,6 +44,7 @@ Mayotte_Dembeni_B104.1Mreads.R1.fastq
 Mayotte_Dembeni_B104.1Mreads.R2.fastq
 ```
 
+##### Data ready to roll
 *Subsampled reads (only 250,000 reads per specimen, not 1M reads as above) are also available [here](https://github.com/jrdupuis/UFSCar_IntTax/tree/main/assets/Bdor_pop_WGS_SRA_data_1M).*
 
 ### Let's do some installs!
