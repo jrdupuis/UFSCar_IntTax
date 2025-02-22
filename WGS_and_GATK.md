@@ -272,7 +272,7 @@ Chromosome4
 Chromosome5
 Chromosome6
 ```
-You also need a file that refers to the locations of the g.vcf files created in step 6, which looks like this 
+You also need a file that refers to the locations of the g.vcf files created in step 6, called `list.sample_map`, which looks like this 
 ```
 SRR22045704	/scratch/jdu282/dorsalis_wgs2/6_gatk_hapcaller_out/SRR22045704.g.vcf
 SRR22045731	/scratch/jdu282/dorsalis_wgs2/6_gatk_hapcaller_out/SRR22045731.g.vcf
